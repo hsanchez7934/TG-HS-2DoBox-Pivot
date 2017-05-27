@@ -17,21 +17,25 @@ main {
   background-color: #E5F3F2;
   text-align: center;
 }
+
 h1 {
   margin: 10px 0 30px 0;
   color: #6D6E71;
   font-family: 'Roboto Slab', serif;
   font-size: 70px;
 }
+
 .idea-color {
   color: #00A79D;
 }
+
 form {
   display: flex;
   align-items: center;
   flex-direction: column;
   width: 100%;
 }
+
 .inputs {
   display: block;
   height: 40px;

@@ -9,10 +9,46 @@ $('.article-container').on('click', '#downvote-btn', changeDownvoteQuality);
 $('.article-container').on('click', '#upvote-btn', changeUpvoteQuality);
 $('.article-container').on('focusout', '.description', replaceEditedDescription);
 $('.article-container').on('focusout', 'h2', replaceEditedTitle);
+$('#search-input').on('input', filterIdeas);
+$('#submit-btn').on('click', submitNewIdea)
+                .on('click', toggleSaveDisable);
+$('#body-input').on('input', toggleSaveDisable);
 
-$('#body-input').on('input', function() {
-  toggleSaveDisable();
-});
+
+function taskObject(title, body) {
+  this.title = title;
+  this.body = body;
+  this.id = Date.now();
+  this.index = 2;
+  this.qualities = ['None', 'Low', 'Normal', 'High', 'Critical'];
+  this.quality = this.qualities[this.index];
+}
+
+function prependNewTask(newTask) {
+  $('.article-container').prepend(`
+    <article id='${newTask.id}'>
+    <div class="description-container">
+    <h2 contentEditable>${newTask.title}</h2>
+    <button class="icons" id="delete-btn"></button>
+    <p class="description" contentEditable>${newTask.body}</p>
+    </div>
+    <div class="voting-container">
+    <button class="icons" id="upvote-btn"></button>
+    <button class="icons" id="downvote-btn"></button>
+    <p class="quality">quality: <span class="quality-level">${newTask.quality}</span></p>
+    </div>
+    </article>`);
+  }
+
+function submitNewIdea(e) {
+  e.preventDefault();
+  var titleInput = $('#title-input').val();
+  var bodyInput = $('#body-input').val();
+  var newTask = new taskObject(titleInput, bodyInput);
+  prependNewTask(newTask);
+  saveLocalStorage(newTask);
+  clearInputs();
+}
 
 $('#body-input').on('keydown', function(e) {
   if(e.keyCode === 13) {
@@ -20,8 +56,6 @@ $('#body-input').on('keydown', function(e) {
   }
 });
 
-$('#search-input').on('input', filterIdeas);
-$('#submit-btn').on('click', submitNewIdea);
 
 $('#title-input').on('input', function() {
   toggleSaveDisable();
@@ -57,10 +91,8 @@ function changeUpvoteQuality(e) {
 }
 
 function clearInputs() {
-  $('#title-input').val('');
-  $('#body-input').val('');
+  $('#title-input, #body-input').val('');
   $('#title-input').focus();
-  toggleSaveDisable();
 }
 
 function displayFilteredList() {
@@ -112,12 +144,6 @@ function getFromLocalStorage() {
   return parseIdeaList;
 }
 
-function ideaObject(title, body, id, quality) {
-  this.title = title;
-  this.body = body;
-  this.id = id;
-  this.quality = quality;
-}
 
 function loadIdeasFromStorage() {
   if (localStorage.getItem('ideas')) {
@@ -129,35 +155,6 @@ function loadIdeasFromStorage() {
   }
 }
 
-function prependExistingIdeas(idea) {
-  $('.article-container').prepend(`<article id='${idea.id}'>
-  <div class="description-container">
-  <h2 contentEditable = 'true'>${idea.title}</h2>
-  <button class="icons" id="delete-btn"></button>
-  <p class="description" contentEditable = 'true'>${idea.body}</p>
-  </div>
-  <div class="voting-container">
-  <button class="icons" id="upvote-btn"></button>
-  <button class="icons" id="downvote-btn"></button>
-  <p class="quality">quality: <span class="quality-level">${idea.quality}</span></p>
-  </div>
-  </article>`)
-}
-
-function prependNewIdea(titleId, titleInput, bodyInput, newIdea) {
-  $('.article-container').prepend(`<article id='${titleId}'>
-  <div class="description-container">
-  <h2 contentEditable = 'true'>${titleInput}</h2>
-  <button class="icons" id="delete-btn"></button>
-  <p class="description" contentEditable = 'true'>${bodyInput}</p>
-  </div>
-  <div class="voting-container">
-  <button class="icons" id="upvote-btn"></button>
-  <button class="icons" id="downvote-btn"></button>
-  <p class="quality">quality: <span class="quality-level">${newIdea.quality}</span></p>
-  </div>
-  </article>`);
-}
 
 function removeIdea(e) {
   var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
@@ -186,24 +183,10 @@ function replaceIdeaInLocalStorage(editedObject) {
   filterIdeas();
 }
 
-function setInLocalStorage() {
-  var stringIdeaList = JSON.stringify(ideaList);
-  localStorage.setItem('ideas', stringIdeaList);
+function saveLocalStorage(task) {
+  localStorage.setItem(task.id, JSON.stringify(task));
 }
 
-function submitNewIdea(e) {
-  e.preventDefault();
-  var titleInput = $('#title-input').val();
-  var bodyInput = $('#body-input').val();
-  var quality = 'swill';
-  var titleId = Date.now();
-  var newIdea = new ideaObject(titleInput, bodyInput, titleId, quality);
-  ideaList.push(newIdea);
-  prependNewIdea(titleId, titleInput, bodyInput, newIdea);
-  setInLocalStorage();
-  clearInputs();
-  filterIdeas();
-}
 
 function switchDownvote(editedObject) {
   switch (editedObject.quality) {
@@ -236,9 +219,7 @@ function switchUpvote(editedObject) {
 }
 
 function toggleSaveDisable() {
-  var title = $('#title-input').val();
-  var body = $('#body-input').val();
-  if ((title === '') || (body === '')) {
+  if ($('#title-input').val() === '' || $('#body-input').val() === '') {
     $('#submit-btn').prop('disabled', true);
   } else {
     $('#submit-btn').prop('disabled', false);
