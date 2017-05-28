@@ -4,11 +4,11 @@ var indexOfOriginalObject;
 retrieveStorage();
 
 $('.article-container').on('click', '#delete-btn', removeTask);
-$('.article-container').on('click', '#downvote-btn', changeDownvoteQuality);
+$('.article-container').on('click', '#downvote-btn', downvoteBtn);
 $('.article-container').on('click', '#upvote-btn', upvoteBtn);
 $('.article-container').on('focusout', '.description', replaceEditedDescription);
 $('.article-container').on('focusout', 'h2', replaceEditedTitle);
-$('#search-input').on('input', filterIdeas);
+$('#search-input').on('input', filterTasks);
 $('#submit-btn').on('click', submitNewTask)
                 .on('click', toggleSaveDisable);
 $('#body-input, #title-input').on('input', toggleSaveDisable);
@@ -121,6 +121,30 @@ function upvoteBtn() {
   updateStorage(taskID, task[0]);
   $(this).siblings('.quality').text("quality: " + task[1][task[2]]);
 }
+
+function downvoteBtn() {
+  var taskID = $(this).closest('article').attr('id');
+  var task = getFromLocalStorage(taskID);
+  if (task[2]=== 0) {return;}
+  task[2]--;
+  task[0].quality= task[1][task[2]];
+  task[0].index= task[2];
+  updateStorage(taskID, task[0]);
+  $(this).siblings('.quality').text("quality: " + task[1][task[2]]);
+}
+
+
+function filterTasks() {
+    var userInput = $(this).val().toLowerCase();
+    $('article').each(function() {
+      var taskText = $(this).text().toLowerCase();
+      if (taskText.indexOf(userInput)!== -1 ) {
+      $(this).show();
+    } else {
+      $(this).hide();
+    }
+  })
+}
 /*---------------------------------------
 >>>>>>>>  FUNCTIONS TO REFACTOR <<<<<<<<
 ----------------------------------------*/
@@ -135,24 +159,6 @@ $(window).on('load', function() {
   $('#title-input').focus();
 });
 
-function changeDownvoteQuality(e) {
-  var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
-  localStorage.clear();
-  switchDownvote(editedObject);
-  ideaList.splice(indexOfOriginalObject, 1, editedObject);
-  setInLocalStorage();
-  filterIdeas();
-}
-
-function changeUpvoteQuality(e) {
-  var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
-  localStorage.clear();
-  switchUpvote(editedObject);
-  ideaList.splice(indexOfOriginalObject, 1, editedObject);
-  setInLocalStorage();
-  filterIdeas();
-}
-
 function displayFilteredList() {
   $('.article-container').children().remove();
   filteredIdeas.forEach(function(idea) {
@@ -160,27 +166,6 @@ function displayFilteredList() {
   });
 }
 
-function findIndexIdeaList(id) {
-  var list = getFromLocalStorage();
-  var mapIdea = list.map(function(idea) {
-    return idea.id;
-  })
-  var specificID = mapIdea.filter(function(number) {
-    if (parseInt(id) === number) {
-      return number;
-    }
-  })
-  var idAsNumber = specificID[0];
-  var foundObject;
-  list.forEach(function(object, index) {
-    if (parseInt(object.id) === idAsNumber) {
-      foundObject = object;
-      indexOfOriginalObject = index;
-      return object;
-    }
-  })
-  return foundObject;
-}
 
 function filterIdeas() {
   var searchInput = $('#search-input').val().toUpperCase();
