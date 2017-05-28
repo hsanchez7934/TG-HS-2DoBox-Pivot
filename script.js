@@ -14,7 +14,9 @@ $('#submit-btn').on('click', submitNewTask)
                 .on('click', toggleSaveDisable);
 $('#body-input, #title-input').on('input', toggleSaveDisable);
 
-
+/*---------------------------------------
+>>>>>>>>  FUNCTIONS WE'RE KEEPING <<<<<<<<
+----------------------------------------*/
 function taskObject(title, body) {
   this.title = title;
   this.body = body;
@@ -46,11 +48,48 @@ function submitNewTask(e) {
   var bodyInput = $('#body-input').val();
   var newTask = new taskObject(titleInput, bodyInput);
   prependNewTask(newTask);
-  saveLocalStorage(newTask);
+  saveStorage(newTask);
   clearInputs();
 }
 
+function clearInputs() {
+  $('#title-input, #body-input').val('');
+  $('#title-input').focus();
+}
 
+function toggleSaveDisable() {
+  if ($('#title-input').val() === '' || $('#body-input').val() === '') {
+    $('#submit-btn').prop('disabled', true);
+  } else {
+    $('#submit-btn').prop('disabled', false);
+  }
+}
+
+function retrieveStorage () {
+  for (var i = 0; i < localStorage.length; i++) {
+    prependNewTask(JSON.parse(localStorage.getItem(localStorage.key(i))));
+  }
+}
+
+function saveStorage(task) {
+  localStorage.setItem(task.id, JSON.stringify(task));
+}
+
+function getFromLocalStorage(id) {
+  var parsedObject = JSON.parse(localStorage.getItem(id));
+  return [parsedObject, parsedObject.qualities, parsedObject.index, parsedObject.quality];
+}
+
+function updateStorage(id, newVal) {
+  localStorage.setItem(id, JSON.stringify(newVal));
+}
+
+function removeStorage(id) {
+  localStorage.removeItem(id);
+}
+/*---------------------------------------
+>>>>>>>>  FUNCTIONS TO REFACTOR <<<<<<<<
+----------------------------------------*/
 $(window).on('keyup', function(e) {
   if(e.keyCode === 13 && ($('#title-input').val() !== '') && ($('#body-input').val() !== '')){
     toggleSaveDisable();
@@ -78,11 +117,6 @@ function changeUpvoteQuality(e) {
   ideaList.splice(indexOfOriginalObject, 1, editedObject);
   setInLocalStorage();
   filterIdeas();
-}
-
-function clearInputs() {
-  $('#title-input, #body-input').val('');
-  $('#title-input').focus();
 }
 
 function displayFilteredList() {
@@ -129,18 +163,11 @@ function filterIdeas() {
   }
 }
 
-function getFromLocalStorage() {
-  var parseIdeaList = JSON.parse(localStorage.getItem('ideas'));
-  return parseIdeaList;
+
+
+function removeStorage(id) {
+  localStorage.removeItem(id);
 }
-
-
-function retrieveStorage () {
-  for (var i = 0; i < localStorage.length; i++) {
-    prependNewTask(JSON.parse(localStorage.getItem(localStorage.key(i))));
-  }
-}
-
 
 function removeIdea(e) {
   var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
@@ -162,17 +189,12 @@ function replaceEditedTitle(e) {
   replaceIdeaInLocalStorage(editedObject);
 }
 
-function replaceIdeaInLocalStorage(editedObject) {
-  localStorage.clear();
-  ideaList.splice(indexOfOriginalObject, 1, editedObject);
-  setInLocalStorage();
-  filterIdeas();
-}
-
-function saveLocalStorage(task) {
-  localStorage.setItem(task.id, JSON.stringify(task));
-}
-
+// function replaceIdeaInLocalStorage(editedObject) {
+//   localStorage.clear();
+//   ideaList.splice(indexOfOriginalObject, 1, editedObject);
+//   setInLocalStorage();
+//   filterIdeas();
+// }
 
 function switchDownvote(editedObject) {
   switch (editedObject.quality) {
