@@ -1,10 +1,9 @@
 
 var filteredIdeas = [];
-var ideaList = getFromLocalStorage() || [];
 var indexOfOriginalObject;
 retrieveStorage();
 
-$('.article-container').on('click', '#delete-btn', removeIdea);
+$('.article-container').on('click', '#delete-btn', removeTask);
 $('.article-container').on('click', '#downvote-btn', changeDownvoteQuality);
 $('.article-container').on('click', '#upvote-btn', changeUpvoteQuality);
 $('.article-container').on('focusout', '.description', replaceEditedDescription);
@@ -87,6 +86,16 @@ function updateStorage(id, newVal) {
 function removeStorage(id) {
   localStorage.removeItem(id);
 }
+
+function removeStorage(id) {
+  localStorage.removeItem(id);
+}
+
+function removeTask () {
+  var taskID = $(this).closest('article').attr('id');
+  removeStorage(taskID);
+  $(this).closest('article').remove();
+}
 /*---------------------------------------
 >>>>>>>>  FUNCTIONS TO REFACTOR <<<<<<<<
 ----------------------------------------*/
@@ -161,12 +170,6 @@ function filterIdeas() {
     })
     displayFilteredList();
   }
-}
-
-
-
-function removeStorage(id) {
-  localStorage.removeItem(id);
 }
 
 function removeIdea(e) {
