@@ -5,7 +5,7 @@ retrieveStorage();
 
 $('.article-container').on('click', '#delete-btn', removeTask);
 $('.article-container').on('click', '#downvote-btn', changeDownvoteQuality);
-$('.article-container').on('click', '#upvote-btn', changeUpvoteQuality);
+$('.article-container').on('click', '#upvote-btn', upvoteBtn);
 $('.article-container').on('focusout', '.description', replaceEditedDescription);
 $('.article-container').on('focusout', 'h2', replaceEditedTitle);
 $('#search-input').on('input', filterIdeas);
@@ -14,16 +14,16 @@ $('#submit-btn').on('click', submitNewTask)
 $('#body-input, #title-input').on('input', toggleSaveDisable);
 
 /*---------------------------------------
->>>>>>>>  FUNCTIONS WE'RE KEEPING <<<<<<<<
+>>>>>>>>  FUNCTIONS WE'VE REFACTORED <<<<<<<<
 ----------------------------------------*/
-function taskObject(title, body) {
-  this.title = title;
-  this.body = body;
-  this.id = Date.now();
-  this.index = 2;
-  this.qualities = ['None', 'Low', 'Normal', 'High', 'Critical'];
-  this.quality = this.qualities[this.index];
-}
+// function taskObject(title, body) {
+//   this.title = title;
+//   this.body = body;
+//   this.id = Date.now();
+//   this.index = 2;
+//   this.qualities = ['None', 'Low', 'Normal', 'High', 'Critical'];
+//   this.quality = this.qualities[this.index];
+// }
 
 function prependNewTask(newTask) {
   $('.article-container').prepend(`
@@ -64,7 +64,7 @@ function toggleSaveDisable() {
   }
 }
 
-function retrieveStorage () {
+function retrieveStorage() {
   for (var i = 0; i < localStorage.length; i++) {
     prependNewTask(JSON.parse(localStorage.getItem(localStorage.key(i))));
   }
@@ -74,10 +74,10 @@ function saveStorage(task) {
   localStorage.setItem(task.id, JSON.stringify(task));
 }
 
-function getFromLocalStorage(id) {
-  var parsedObject = JSON.parse(localStorage.getItem(id));
-  return [parsedObject, parsedObject.qualities, parsedObject.index, parsedObject.quality];
-}
+// function getFromLocalStorage(id) {
+//   var parsedObject = JSON.parse(localStorage.getItem(id));
+//   return [parsedObject, parsedObject.qualities, parsedObject.index, parsedObject.quality];
+// }
 
 function updateStorage(id, newVal) {
   localStorage.setItem(id, JSON.stringify(newVal));
@@ -95,6 +95,31 @@ function removeTask () {
   var taskID = $(this).closest('article').attr('id');
   removeStorage(taskID);
   $(this).closest('article').remove();
+}
+
+function taskObject(title, body) {
+  this.title = title;
+  this.body = body;
+  this.id = Date.now();
+  this.index = 2;
+  this.qualities = ['None', 'Low', 'Normal', 'High', 'Critical'];
+  this.quality = this.qualities[this.index];
+}
+
+function getFromLocalStorage(id) {
+  var parsedObject = JSON.parse(localStorage.getItem(id));
+  return [parsedObject, parsedObject.qualities, parsedObject.index, parsedObject.quality];
+}
+
+function upvoteBtn() {
+  var taskID = $(this).closest('article').attr('id');
+  var task = getFromLocalStorage(taskID);
+  if (task[2] === task[1].length - 1) {return;}
+  task[2]++;
+  task[0].quality= task[1][task[2]];
+  task[0].index = task[2];
+  updateStorage(taskID, task[0]);
+  $(this).siblings('.quality').text("quality: " + task[1][task[2]]);
 }
 /*---------------------------------------
 >>>>>>>>  FUNCTIONS TO REFACTOR <<<<<<<<
