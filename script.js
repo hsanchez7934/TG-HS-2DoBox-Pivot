@@ -1,5 +1,4 @@
-$(document).ready(retrieveStorage)
-           .ready(titleFocus);
+$(document).ready(retrieveStorage);
 $(window).on('keydown', enterKey);
 $('.article-container').on('click', '#delete-btn', removeTask)
                        .on('click', '#downvote-btn', downvoteBtn)
@@ -10,6 +9,8 @@ $('#search-input').on('input', filterTasks);
 $('#submit-btn').on('click', submitNewTask)
                 .on('click', clearInputs);
 $('#body-input, #title-input').on('input', toggleSaveDisable);
+$('.article-container').on('keydown', 'h2', saveTitleOnEnter)
+                       .on('keydown', '.description', saveBodyOnEnter);
 
 /*---------------------------------------
 >>>>>>>>  FUNCTIONS WE'VE REFACTORED <<<<<<<<
@@ -137,6 +138,7 @@ function replaceEditedTitle() {
   var editedObject = getFromLocalStorage(taskID);
   editedObject[0].title = $(this).text();
   updateStorage(taskID, editedObject[0]);
+
 }
 
 function enterKey(e) {
@@ -145,62 +147,24 @@ function enterKey(e) {
   }
 }
 
-function titleFocus() {
-  $('#title-input').focus();
+function saveTitleOnEnter () {
+  var taskID = $(this).closest('article').attr('id');
+  var editedObject = getFromLocalStorage(taskID);
+  if(event.keyCode === 13) {
+    event.preventDefault();
+    editedObject[0].title = $(this).text();
+    updateStorage(taskID, editedObject[0]);
+    $('h2').blur()
+  }
 }
 
-
-/*---------------------------------------
->>>>>>>>  FUNCTIONS TO REFACTOR <<<<<<<<
-----------------------------------------*/
-
-
-// function displayFilteredList() {
-//   $('.article-container').children().remove();
-//   filteredIdeas.forEach(function(idea) {
-//     prependExistingIdeas(idea);
-//   });
-// }
-
-
-// function filterIdeas() {
-//   var searchInput = $('#search-input').val().toUpperCase();
-//   ideaList = getFromLocalStorage() || [];
-//   if(searchInput === '') {
-//     filteredIdeas = [];
-//     displayFilteredList();
-//     loadIdeasFromStorage();
-//   } else {
-//       filteredIdeas = ideaList.filter(function(ideaObject) {
-//       return ((ideaObject.title.toUpperCase().indexOf(searchInput) > -1) || (ideaObject.body.toUpperCase().indexOf(searchInput) > -1) || (ideaObject.quality.toUpperCase().indexOf(searchInput) > -1))
-//     })
-//     displayFilteredList();
-//   }
-// }
-
-function removeIdea(e) {
-  var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
-  ideaList.splice(indexOfOriginalObject, 1);
-  localStorage.clear();
-  setInLocalStorage();
-  $(this).parents('article').remove();
+function saveBodyOnEnter () {
+  var taskID = $(this).closest('article').attr('id');
+  var editedObject = getFromLocalStorage(taskID);
+  if(event.keyCode === 13) {
+    event.preventDefault();
+    editedObject[0].body = $(this).text();
+    updateStorage(taskID, editedObject[0]);
+    $('.description').blur()
+  }
 }
-
-// function replaceEditedDescription(e) {
-//   var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
-//   editedObject.body = $(this).text();
-//   replaceIdeaInLocalStorage(editedObject);
-// }
-
-// function replaceEditedTitle(e) {
-//   var editedObject = findIndexIdeaList($(e.target).parent().parent().prop('id'));
-//   editedObject.title = $(this).text();
-//   replaceIdeaInLocalStorage(editedObject);
-// }
-
-// function replaceIdeaInLocalStorage(editedObject) {
-//   localStorage.clear();
-//   ideaList.splice(indexOfOriginalObject, 1, editedObject);
-//   setInLocalStorage();
-//   filterIdeas();
-//
