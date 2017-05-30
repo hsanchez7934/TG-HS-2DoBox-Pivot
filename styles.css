@@ -46,10 +46,12 @@ form {
   color: #6D6E71;
   font-size: 20px;
   letter-spacing: 0.8px;
+  outline: none;
 }
 textarea {
   padding-top: 5px;
   resize: none;
+  outline: none;
 }
 .inputs::placeholder {
   color: #d1d3d4;
@@ -99,6 +101,7 @@ h2 {
   font-family: 'Roboto Slab', serif;
   overflow: hidden;
   text-overflow: ellipsis;
+  outline: none;
 }
 .description {
   width: 90%;
@@ -106,6 +109,7 @@ h2 {
   border: none;
   color: #939598;
   line-height: 1.2;
+  outline: none;
 }
 button {
   height: 25px;
