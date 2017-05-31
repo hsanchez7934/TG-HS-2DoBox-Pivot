@@ -11,10 +11,8 @@ $('#submit-btn').on('click', submitNewTask)
 $('#body-input, #title-input').on('input', toggleSaveDisable);
 $('.article-container').on('keydown', 'h2', saveTitleOnEnter)
                        .on('keydown', '.description', saveBodyOnEnter);
+$('.article-container').on('click', '.completed-task', completedTaskBtn);
 
-/*---------------------------------------
->>>>>>>>  FUNCTIONS WE'VE REFACTORED <<<<<<<<
-----------------------------------------*/
 function taskObject(title, body) {
   this.title = title;
   this.body = body;
@@ -36,6 +34,7 @@ function prependNewTask(newTask) {
     <button class="icons" id="upvote-btn"></button>
     <button class="icons" id="downvote-btn"></button>
     <p class="quality">quality: <span class="quality-level">${newTask.quality}</span></p>
+    <button class="completed-task">Completed Task</button>
     </div>
     </article>`);
   }
@@ -52,7 +51,6 @@ function submitNewTask() {
 
 function clearInputs() {
   $('#title-input, #body-input').val('');
-  $('#title-input').focus();
 }
 
 function toggleSaveDisable() {
@@ -147,24 +145,51 @@ function enterKey(e) {
   }
 }
 
-function saveTitleOnEnter () {
+function saveTitleOnEnter() {
   var taskID = $(this).closest('article').attr('id');
   var editedObject = getFromLocalStorage(taskID);
   if(event.keyCode === 13) {
     event.preventDefault();
     editedObject[0].title = $(this).text();
     updateStorage(taskID, editedObject[0]);
-    $('h2').blur()
+    $('h2').blur();
   }
 }
 
-function saveBodyOnEnter () {
+function saveBodyOnEnter() {
   var taskID = $(this).closest('article').attr('id');
   var editedObject = getFromLocalStorage(taskID);
   if(event.keyCode === 13) {
     event.preventDefault();
     editedObject[0].body = $(this).text();
     updateStorage(taskID, editedObject[0]);
-    $('.description').blur()
+    $('.description').blur();
   }
 }
+
+// function saveCompTask() {
+// }
+//
+// function completedTaskBtn() {
+//   var taskID = $(this).closest('article').attr('id');
+//   var editedObject = getFromLocalStorage(taskID);
+//   var oldTask = $(this).closest('article').remove();
+//   removeStorage(oldTask);
+// }
+//
+// function prependCompletedTask(task) {
+//   $('.article-container').prepend(`
+//     <article id='${task.id}' style="background-color:#7b7d7f">
+//     <div class="description-container">
+//     <h2 contentEditable>${task.title}</h2>
+//     <button class="icons" id="delete-btn"></button>
+//     <p class="description" contentEditable>${task.body}</p>
+//     </div>
+//     <div class="voting-container">
+//     <button class="icons" id="upvote-btn"></button>
+//     <button class="icons" id="downvote-btn"></button>
+//     <p class="quality">quality: <span class="quality-level">${task.quality}</span></p>
+//     <button class="completed-task">Completed Task</button>
+//     </div>
+//     </article>`);
+//   }

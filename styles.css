@@ -134,9 +134,16 @@ button:focus {
   background-image: url('assets/delete-hover.svg');
 }
 .voting-container {
-  display: flex;
-  align-items: center;
+  /*display: flex;*/
+  /*align-items: center;*/
 }
+
+.voting-container:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
 .voting-container img {
   margin-right: 20px;
 }
@@ -144,20 +151,40 @@ button:focus {
   margin-right: 15px;
 }
 #upvote-btn {
+  position: relative;
+  top: 7px;
   background-image: url('assets/upvote.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #upvote-btn:hover {
   background-image: url('assets/upvote-hover.svg');
 }
+
 #downvote-btn {
+  position: relative;
+  top: 7px;
   background-image: url('assets/downvote.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
+
 #downvote-btn:hover {
   background-image: url('assets/downvote-hover.svg');
 }
+
 .quality {
   display: inline-block;
   color: #6D6E71;
+}
+
+.completed-task {
+  border: 1px solid black;
+  height: 40px;
+  width: 160px;
+  float: right;
+  background-color: #00A79D;
+  color: #fff;
 }
 
 /*MEDIA QUERIES*/
@@ -167,49 +194,63 @@ button:focus {
     font-size: 60px;
   }
 }
+
 @media screen and (max-width: 665px) {
   h1 {
     font-size: 50px;
   }
+
   .inputs {
     width: 80%;
   }
+
   article {
     width: 80%;
   }
+
 @media screen and (max-width: 490px) {
   h1 {
     margin: 0 0 20px 0;
     font-size: 35px;
   }
+
   .inputs {
     width: 95%;
     font-size: 25px;
   }
+
   main .inputs {
     margin-bottom: 15px;
   }
+
   #body-input {
     height: 120px;
   }
+
   #body-input::placeholder {
     font-size: 25px;
   }
+
   #submit-btn {
     margin-bottom: 0;
   }
+
   section {
     padding-top: 20px;
   }
+
   article {
     width: 95%;
   }
+
   h2 {
     font-size: 30px;
   }
+
   .description {
     font-size: 20px;
   }
+  
   .quality {
     font-size: 17px;
   }
