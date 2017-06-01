@@ -1,4 +1,5 @@
-$(document).ready(retrieveStorage);
+$(document).ready(retrieveStorage)
+           .ready(showMostRecent);
 $(window).on('keydown', enterKey);
 $('.article-container').on('click', '#delete-btn', removeTask)
                        .on('click', '#downvote-btn', downvoteBtn)
@@ -8,10 +9,18 @@ $('.article-container').on('focusout', '.description', replaceEditedDescription)
 $('#search-input').on('input', filterTasks);
 $('#submit-btn').on('click', submitNewTask)
                 .on('click', clearInputs);
-$('#body-input, #title-input').on('input', toggleSaveDisable);
+$('#body-input, #title-input').on('input', toggleSaveDisable)
+                              .on('input', characterCount);
 $('.article-container').on('keydown', 'h2', saveTitleOnEnter)
                        .on('keydown', '.description', saveBodyOnEnter);
 $('.article-container').on('click', '.completed-task', completedTaskBtn);
+$('#comp-todos').on('click', retrieveCompletedTasks);
+$('#show-more').on('click', showMore);
+$('#none-button').on('click', filterNone);
+$('#low-button').on('click', filterLow);
+$('#normal-button').on('click', filterNormal);
+$('#high-button').on('click', filterHigh);
+$('#critical-button').on('click', filterCritical);
 
 function taskObject(title, body) {
   this.title = title;
@@ -54,16 +63,28 @@ function clearInputs() {
 }
 
 function toggleSaveDisable() {
-  if ($('#title-input').val() === '' || $('#body-input').val() === '') {
-    $('#submit-btn').prop('disabled', true);
-  } else {
+  if ($('#title-input').val() !== '' || $('#body-input').val() !== '') {
     $('#submit-btn').prop('disabled', false);
+  } else {
+    $('#submit-btn').prop('disabled', true);
   }
 }
 
 function retrieveStorage() {
   for (var i = 0; i < localStorage.length; i++) {
-    prependNewTask(JSON.parse(localStorage.getItem(localStorage.key(i))));
+    var tasks = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if(!tasks.hasOwnProperty('completed')) {
+      prependNewTask(tasks);
+    }
+  }
+}
+
+function retrieveCompletedTasks() {
+  for(var i =0; i < localStorage.length; i++) {
+    var tasks = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    if(tasks.hasOwnProperty('completed')) {
+      prependCompletedTask(tasks);
+    }
   }
 }
 
@@ -124,6 +145,71 @@ function filterTasks() {
   });
 }
 
+function filterNone() {
+  var tasks = $('article');
+  tasks.each(function() {
+    var taskNormal = $(this).text();
+    if(taskNormal.indexOf('quality: None') !== -1) {
+      $(this).show();
+    }
+    else {
+      $(this).hide();
+    }
+  });
+}
+
+function filterLow() {
+  var tasks = $('article');
+  tasks.each(function() {
+    var taskNormal = $(this).text();
+    if(taskNormal.indexOf('quality: Low') !== -1) {
+      $(this).show();
+    }
+    else {
+      $(this).hide();
+    }
+  });
+}
+
+function filterNormal() {
+  var tasks = $('article');
+  tasks.each(function() {
+    var taskNormal = $(this).text();
+    if(taskNormal.indexOf('quality: Normal') !== -1) {
+      $(this).show();
+    }
+    else {
+      $(this).hide();
+    }
+  });
+}
+
+function filterHigh() {
+  var tasks = $('article');
+  tasks.each(function() {
+    var taskNormal = $(this).text();
+    if(taskNormal.indexOf('quality: High') !== -1) {
+      $(this).show();
+    }
+    else {
+      $(this).hide();
+    }
+  });
+}
+
+function filterCritical() {
+  var tasks = $('article');
+  tasks.each(function() {
+    var taskNormal = $(this).text();
+    if(taskNormal.indexOf('quality: Critical') !== -1) {
+      $(this).show();
+    }
+    else {
+      $(this).hide();
+    }
+  });
+}
+
 function replaceEditedDescription() {
   var taskID = $(this).closest('article').attr('id');
   var editedObject = getFromLocalStorage(taskID);
@@ -167,29 +253,63 @@ function saveBodyOnEnter() {
   }
 }
 
-// function saveCompTask() {
-// }
-//
-// function completedTaskBtn() {
-//   var taskID = $(this).closest('article').attr('id');
-//   var editedObject = getFromLocalStorage(taskID);
-//   var oldTask = $(this).closest('article').remove();
-//   removeStorage(oldTask);
-// }
-//
-// function prependCompletedTask(task) {
-//   $('.article-container').prepend(`
-//     <article id='${task.id}' style="background-color:#7b7d7f">
-//     <div class="description-container">
-//     <h2 contentEditable>${task.title}</h2>
-//     <button class="icons" id="delete-btn"></button>
-//     <p class="description" contentEditable>${task.body}</p>
-//     </div>
-//     <div class="voting-container">
-//     <button class="icons" id="upvote-btn"></button>
-//     <button class="icons" id="downvote-btn"></button>
-//     <p class="quality">quality: <span class="quality-level">${task.quality}</span></p>
-//     <button class="completed-task">Completed Task</button>
-//     </div>
-//     </article>`);
-//   }
+function completedTaskBtn() {
+  var taskID = $(this).closest('article').attr('id');
+  var editedObject = getFromLocalStorage(taskID);
+  var oldTask = $(this).closest('article').remove();
+  editedObject[0].completed = true;
+  prependCompletedTask(editedObject[0]);
+  updateStorage(taskID, editedObject[0]);
+}
+
+function prependCompletedTask(task) {
+  $('.article-container').prepend(`
+    <article id='${task.id}' style="background-color:#7b7d7f">
+    <div class="description-container">
+    <h2 contentEditable style="color:#fff">${task.title}</h2>
+    <button class="icons" id="delete-btn"></button>
+    <p class="description" contentEditable style="color:#fff">${task.body}</p>
+    </div>
+    <div class="voting-container">
+    <button class="icons" id="upvote-btn"></button>
+    <button class="icons" id="downvote-btn"></button>
+    <p class="quality" style="color:#fff">quality: <span class="quality-level" style="color:#fff">${task.quality}</span></p>
+    <button class="completed-task">Completed Task</button>
+    </div>
+    </article>`);
+  }
+
+function showMostRecent() {
+	var parent = $('.article-container').children();
+    parent.each(function(index) {
+      for(var i = 0; i < 1; i++) {
+        if(index < 10) {
+          $(this).show();
+        }
+        else {
+          $(this).hide();
+        }
+    }
+  });
+}
+
+function showMore() {
+  var parent = $('.article-container').children();
+  parent.each(function(index) {
+    for(var i = 0; i < 1; i++) {
+      $(this).show();
+    }
+  });
+}
+
+function characterCount() {
+  var titleInput = $('#title-input').val();
+  var bodyInput = $('#body-input').val();
+  var titleInputLength = titleInput.length;
+  var bodyInputLength = bodyInput.length;
+  $('#title-length-display').text("Title character count: " + titleInputLength);
+  $('#body-length-display').text("Body character count: " + bodyInputLength);
+  if(titleInputLength > 121 || bodyInputLength > 121 ) {
+    toggleSaveDisable();
+  }
+}

@@ -13,11 +13,22 @@
       <h1><span class="idea-color">idea</span>box</h1>
       <form action="#" method="#">
         <input type="text" placeholder="Title" class="inputs" id="title-input">
+        <p class="length-display" id="title-length-display"></p>
         <textarea cols="100" placeholder="Body" class="inputs" id="body-input"></textarea>
+        <p class="length-display" id="body-length-display"></p>
         <input type="submit" class="inputs" id="submit-btn" value="save" disabled>
+        <button type="button" class="inputs" id="comp-todos" name="button">Show Completed ToDo's</button>
+        <button type="button" name="button" class="inputs" id="show-more">Show More ToDo's</button>
       </form>
     </main>
     <section>
+      <div id="filter-buttons-container">
+        <button class="filter-buttons" id="none-button" type="button" name="button">None</button>
+        <button class="filter-buttons" id="low-button" type="button" name="button">Low</button>
+        <button class="filter-buttons" id="normal-button" type="button" name="button">Normal</button>
+        <button class="filter-buttons" id="high-button" type="button" name="button">High</button>
+        <button class="filter-buttons" id="critical-button" type="button" name="button">Critical</button>
+      </div>
       <input type="text" placeholder="Search" class="inputs" id="search-input">
       <div class="article-container">
       </div>
