@@ -53,6 +53,15 @@ textarea {
   resize: none;
   outline: none;
 }
+
+.length-display {
+  height: 30px;
+  width: 400px;
+  top: -13px;
+  bottom: 0;
+  position: relative;
+}
+
 .inputs::placeholder {
   color: #d1d3d4;
 }
@@ -68,6 +77,24 @@ textarea {
   background-color: #939598;
 }
 
+#comp-todos {
+  background-color: #00a79d;
+  color: #fff;
+}
+
+#comp-todos:hover {
+  background-color: #045355;
+}
+
+#show-more {
+  background-color: #00a79d;
+  color: #fff;
+}
+
+#show-more:hover {
+  background-color: #045355;
+}
+
 /*IDEASECTION*/
 
 section {
@@ -76,6 +103,25 @@ section {
   flex-direction: column;
   padding: 40px 20px 0 20px;
 }
+
+#filter-buttons-container {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.filter-buttons {
+  background-color: #00a79d;
+  color: #fff;
+  height: 40px;
+  width: 100px;
+}
+
+.filter-buttons:hover {
+  background-color: #045355;
+}
+
 #search-input {
   margin-bottom: 45px;
 }
@@ -250,7 +296,7 @@ button:focus {
   .description {
     font-size: 20px;
   }
-  
+
   .quality {
     font-size: 17px;
   }
